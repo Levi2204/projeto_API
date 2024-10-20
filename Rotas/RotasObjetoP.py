@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from Database import executar_consulta, selecionar_dados
+from Database import executar_consulta, selecionar_dados, conectar_BD
 
 
 def criar_rotasP(app):
@@ -18,6 +18,45 @@ def criar_rotasP(app):
             return jsonify({'mensagem': 'Tabela criada com sucesso!'})
         else:
             return jsonify({'mensagem': 'Erro ao criar a tabela.'}), 500
+
+    def chamar_stored_procedure(query, params):
+        conn = conectar_BD()
+        if conn:
+            try:
+                cursor = conn.cursor()
+                cursor.execute(query, params)
+                conn.commit()
+                cursor.close()
+                return True
+            except Exception as error:
+                print(f"Erro ao chamar stored procedure: {error}")
+                conn.rollback()
+                return False
+            finally:
+                conn.close()
+        return False
+
+
+    @app.route('/inserir_objeto_perdido', methods=['POST'])
+    def inserir_objeto_perdido():
+        dados = request.json
+        nome_objeto = dados.get('nome_objeto')
+        cor = dados.get('cor')
+        data_perdido = dados.get('data_perdido')
+
+        if not nome_objeto or not cor or not data_perdido:
+            return jsonify({'mensagem': 'Dados incompletos'}), 400
+
+        query = "CALL inserir_objeto_perdido(%s, %s, %s)"
+
+        params = (nome_objeto, cor, data_perdido)
+
+        resultado = chamar_stored_procedure(query, params)
+
+        if resultado:
+            return jsonify({'mensagem': 'Objeto perdido inserido com sucesso!'})
+        else:
+            return jsonify({'mensagem': 'Erro ao inserir o objeto perdido'}), 500
 
     @app.route('/inserir_objeto', methods=['POST'])
     def inserir_objeto():
@@ -40,6 +79,24 @@ def criar_rotasP(app):
             return jsonify({'mensagem': 'Objeto inserido com sucesso'})
         else:
             return jsonify({'mensagem': 'Erro ao inserir o objeto'}), 500
+
+    @app.route('/listar_logs', methods=['GET'])
+    def listar_logs():
+        conn = conectar_BD()
+        if conn:
+            try:
+                cursor = conn.cursor()
+                cursor.execute("SELECT * FROM log_insercoes")
+                resultado = cursor.fetchall()
+                cursor.close()
+                return jsonify(resultado)
+            except Exception as error:
+                print("Erro ao listar logs: ", error)
+                return jsonify({'mensagem': 'Erro ao listar logs.'}), 500
+            finally:
+                conn.close()
+        else:
+            return jsonify({'mensagem': 'Erro ao conectar ao banco de dados.'}), 500
 
     @app.route('/atualizar_objeto', methods=['PUT'])
     def atualizar_objeto():
@@ -85,6 +142,12 @@ def criar_rotasP(app):
     @app.route('/listar_objetos', methods=['GET'])
     def listar_objetos():
         query = "SELECT * FROM objetos_perdidos"
+        resultado = selecionar_dados(query)
+        return jsonify(resultado)
+
+    @app.route('/listar_viewObjP', methods=['GET'])
+    def listar_viewObjP():
+        query = "SELECT * FROM view_objetos_perdidos"
         resultado = selecionar_dados(query)
         return jsonify(resultado)
 
