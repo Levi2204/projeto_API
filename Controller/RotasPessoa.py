@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from Database import executar_consulta, selecionar_dados
+from Model.Database import executar_consulta, selecionar_dados
 
 def criar_rotas(app):
     @app.route('/criar_tabela', methods=['POST'])
@@ -7,6 +7,7 @@ def criar_rotas(app):
         query = """
         CREATE TABLE pessoa(
            id_pessoa int PRIMARY KEY,
+           cpf VARCHAR(11),
            nome_pessoa VARCHAR(255),
            email VARCHAR(255),
            telefone VARCHAR(50)

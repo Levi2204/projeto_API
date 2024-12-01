@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from Database import executar_consulta, selecionar_dados
+from Model.Database import executar_consulta, selecionar_dados
 
 def criar_rotasA(app):
     @app.route('/criar_tabela_ObjetoA', methods=['POST'])
@@ -8,6 +8,7 @@ def criar_rotasA(app):
         CREATE TABLE IF NOT EXISTS objetos_achados(
            id_objetoA SERIAL PRIMARY KEY,
            nome_objeto_achado VARCHAR(255),
+           descricao VARCHAR(255),
            cor_achado VARCHAR(100),
            id_objeto int,
            id_pessoa int,

@@ -1,7 +1,7 @@
 from flask import Flask
-from Rotas.RotasPessoa import criar_rotas
-from Rotas.RotasObjetoP import criar_rotasP
-from Rotas.RotasObjetoA import criar_rotasA
+from Controller.RotasPessoa import criar_rotas
+from Controller.RotasObjetoP import criar_rotasP
+from Controller.RotasObjetoA import criar_rotasA
 
 app = Flask(__name__)
 

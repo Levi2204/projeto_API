@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from Database import executar_consulta, selecionar_dados, conectar_BD
+from Model.Database import executar_consulta, selecionar_dados, conectar_BD
 
 
 def criar_rotasP(app):
@@ -9,6 +9,7 @@ def criar_rotasP(app):
         CREATE TABLE IF NOT EXISTS objetos_perdidos(
            id_objeto SERIAL PRIMARY KEY,
            nome_objeto VARCHAR(255),
+           descricao VARCHAR(255),
            cor VARCHAR(100),
            data_perdido VARCHAR(50)
         )
@@ -37,6 +38,7 @@ def criar_rotasP(app):
         return False
 
 
+#1
     @app.route('/inserir_objeto_perdido', methods=['POST'])
     def inserir_objeto_perdido():
         dados = request.json
@@ -98,8 +100,9 @@ def criar_rotasP(app):
         else:
             return jsonify({'mensagem': 'Erro ao conectar ao banco de dados.'}), 500
 
+#2
     @app.route('/atualizar_objeto', methods=['PUT'])
-    def atualizar_objeto():
+    def atualizar_objeto(): #3
         dados = request.json
         id_objeto = dados.get('id_objeto')
         nome_objeto = dados.get('nome_objeto')
@@ -124,6 +127,8 @@ def criar_rotasP(app):
         else:
             return jsonify({'mensagem': 'Erro ao atualizar o objeto'}), 500
 
+
+#4
     @app.route('/deletar_objeto/<int:id_objeto>', methods=['DELETE'])
     def deletar_objeto(id_objeto):
         query = """
@@ -139,6 +144,8 @@ def criar_rotasP(app):
         else:
             return jsonify({'mensagem': 'Erro ao deletar o objeto'}), 500
 
+
+#3
     @app.route('/listar_objetos', methods=['GET'])
     def listar_objetos():
         query = "SELECT * FROM objetos_perdidos"
