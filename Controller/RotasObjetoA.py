@@ -8,12 +8,10 @@ def criar_rotasA(app):
         CREATE TABLE IF NOT EXISTS objetos_achados(
            id_objetoA SERIAL PRIMARY KEY,
            nome_objeto_achado VARCHAR(255),
-           descricao VARCHAR(255),
            cor_achado VARCHAR(100),
-           id_objeto int,
-           id_pessoa int,
-           FOREIGN KEY (id_objeto) REFERENCES objetos_perdidos (id_objeto),
-           FOREIGN KEY (id_pessoa) REFERENCES pessoa (id_pessoa)
+           nome_pessoa VARCHAR(255),
+           cpf VARCHAR(14),
+           contato VARCHAR(200)
         )
         """
         resultado = executar_consulta(query)
@@ -25,34 +23,44 @@ def criar_rotasA(app):
     @app.route('/inserir_objetoA', methods=['POST'])
     def inserir_objetoA():
         dados = request.json
-        nome_objeto_achado = dados.get('nome_objeto_achado')
-        cor_achado = dados.get('cor_achado')
         id_objeto = dados.get('id_objeto')
-        id_pessoa = dados.get('id_pessoa')
+        nome_pessoa = dados.get('nome_pessoa')
+        cpf = dados.get('cpf')
+        contato = dados.get('contato')
 
-        if not nome_objeto_achado or not cor_achado or not id_objeto or not id_pessoa:
-            return jsonify({'mensagem': 'Dados incompletos'}), 400
-        query = """
-        INSERT INTO objetos_achados (nome_objeto_achado, cor_achado, id_objeto, id_pessoa)
-        VALUES (%s,%s,%s,%s)
-        """
+        if not id_objeto:
+            return jsonify({'mensagem': 'ID do objeto perdido e ID da pessoa são obrigatórios'}), 400
 
-        params = (nome_objeto_achado, cor_achado, id_objeto, id_pessoa)
+        query_select = "SELECT nome_objeto, cor FROM objetos_perdidos WHERE id_objeto = %s"
+        params_select = (id_objeto,)
+        resultado = selecionar_dados(query_select, params_select)
 
-        resultado = executar_consulta(query, params)
-        if resultado:
-            return jsonify({'mensagem': 'Objeto inserido com sucesso'})
+        if not resultado:
+            return jsonify({'mensagem': 'Objeto perdido não encontrado'}), 404
+
+        nome_objeto, cor = resultado[0]
+
+        query_insert = """
+            INSERT INTO objetos_achados (nome_objeto_achado, cor_achado, nome_pessoa, cpf, contato)
+            VALUES (%s, %s, %s, %s, %s)
+            """
+        params_insert = (nome_objeto, cor, nome_pessoa, cpf, contato)
+
+        resultado_insert = executar_consulta(query_insert, params_insert)
+
+        if resultado_insert:
+            return jsonify({'mensagem': 'Objeto achado inserido com sucesso!'})
         else:
-            return jsonify({'mensagem': 'Erro ao inserir o objeto'}), 500
-
+            return jsonify({'mensagem': 'Erro ao inserir o objeto achado'}), 500
     @app.route('/atualizar_objetoA', methods=['PUT'])
     def atualizar_objetoA():
         dados = request.json
         id_objetoA = dados.get('id_objetoA')
         nome_objeto_achado = dados.get('nome_objeto_achado')
         cor_achado = dados.get('cor_achado')
-        id_objeto = dados.get('id_objeto')
-        id_pessoa = dados.get('id_pessoa')
+        nome_pessoa = dados.get('nome_pessoa')
+        cpf = dados.get('cpf')
+        contato = dados.get('contato')
 
 
         if not id_objetoA:
@@ -60,11 +68,11 @@ def criar_rotasA(app):
 
         query = """
         UPDATE objetos_achados
-        SET nome_objeto_achado = %s, cor_achado = %s, id_objeto = %s, id_pessoa = %s
+        SET nome_objeto_achado = %s, cor_achado = %s, nome_pessoa = %s, cpf = %s, contato = %s
         WHERE id_objetoA = %s
         """
 
-        params = (nome_objeto_achado, cor_achado, id_objeto, id_pessoa, id_objetoA)
+        params = (nome_objeto_achado, cor_achado, id_objetoA)
 
         resultado = executar_consulta(query, params)
 
