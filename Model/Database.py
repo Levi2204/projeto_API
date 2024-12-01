@@ -4,7 +4,7 @@ import psycopg2 as pg
 def conectar_BD():
     try:
         conn = pg.connect(
-            dbname="APSDBd",
+            dbname="ProjetoBD",
             user="postgres",
             password="senha123",
             host="localhost",
