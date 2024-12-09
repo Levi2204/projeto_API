@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fametro - Listar Objeto Específico</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="../gerenciar-objetos.html">Voltar</a>
+  </nav>
+
+  <header class="text-center p-4">
+    <h1 class="h3">Listar Objeto Específico</h1>
+  </header>
+
+  <main class="container">
+
+    <form id="formPesquisar" class="form-inline">
+        <div class="form-group col-md-12 d-flex">
+            <label for="id" class="mr-2">ID do Objeto</label>
+            <input type="number" class="form-control w-75" id="id" name="id" required>
+            <button type="submit" class="btn btn-info ml-2">Pesquisar</button>
+        </div>
+    </form>
+
+    <div id="resultado" class="mt-4"></div> 
+</main>
+
+<script>
+    
+    async function listarObjetoEspecifico(id) {
+        try {
+            const response = await fetch(`http://localhost:5000/listar_objeto/${id}`);
+            const objeto = await response.json();
+
+            
+            if (objeto["Objeto-perdido"]) {
+                const resultadoDiv = document.getElementById("resultado");
+                resultadoDiv.innerHTML = `
+                    <h4>Objeto Encontrado:</h4>
+                    <table class="table table-bordered mt-4">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Cor</th>
+                                <th>Data Perdido</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>${objeto["Objeto-perdido"].id_objeto}</td>
+                                <td>${objeto["Objeto-perdido"].nome_objeto}</td>
+                                <td>${objeto["Objeto-perdido"].cor}</td>
+                                <td>${objeto["Objeto-perdido"].data_perdido}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `;
+            } else {
+                alert("Objeto não encontrado!");
+            }
+        } catch (error) {
+            console.error("Erro ao listar objeto:", error);
+            alert("Erro ao carregar o objeto. Tente novamente.");
+        }
+    }
+
+    
+    document.getElementById("formPesquisar").addEventListener("submit", function(event) {
+        event.preventDefault(); 
+        const id = document.getElementById("id").value;
+        listarObjetoEspecifico(id);
+    });
+</script>
+
+
+
+  <footer class="text-center p-4 bg-dark text-white fixed-bottom">
+    <p>&copy; 2024 Fametro. Todos os direitos reservados.</p>
+  </footer>
+</body>
+
+</html>

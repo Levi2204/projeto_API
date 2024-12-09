@@ -1,0 +1,18 @@
+body {
+  background-color: #f8f9fa;
+}
+
+.header-bg {
+  background-color: #024221; /* Verde Fametro */
+}
+
+.container {
+  padding: 90px;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fametro - Listar Item Específico</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="../gerenciar-itens-devolvidos.html">Voltar</a>
+  </nav>
+
+  <header class="text-center p-4">
+    <h1 class="h3">Listar Item Específico</h1>
+  </header>
+
+  <main class="container">
+    <form id="formListar" method="GET">
+      <div class="form-group">
+        <label for="id">ID do Objeto</label>
+        <input type="number" class="form-control" id="id" name="id" required>
+      </div>
+      <button type="submit" class="btn btn-info mt-3">Pesquisar</button>
+    </form>
+    
+    <div id="resultado">
+      
+    </div>
+</main>
+
+<script>
+  document.getElementById('formListar').addEventListener('submit', async function (e) {
+    e.preventDefault(); 
+
+    
+    const id = document.getElementById('id').value;
+
+    try {
+      const response = await fetch(`http://localhost:5000/listar_objetoA/${id}`);
+
+      if (!response.ok) {
+        throw new Error(`Erro: ${response.statusText}`);
+      }
+
+      const objeto = await response.json();
+
+      const resultadoDiv = document.getElementById('resultado');
+      if (objeto['Objeto-perdido']) {
+      
+        const item = objeto['Objeto-perdido'];
+        resultadoDiv.innerHTML = `
+          <h4>Detalhes do Objeto:</h4>
+          <table class="table table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th>ID</th>
+                <th>Nome do Objeto</th>
+                <th>Cor</th>
+                <th>Nome da Pessoa</th>
+                <th>CPF</th>
+                <th>Contato</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>${item.id_objetoA}</td>
+                <td>${item.nome_objeto_achado}</td>
+                <td>${item.cor_achado}</td>
+                <td>${item.nome_pessoa}</td>
+                <td>${item.cpf}</td>
+                <td>${item.contato}</td>
+              </tr>
+            </tbody>
+          </table>
+        `;
+      } else {
+        resultadoDiv.innerHTML = `<p>${objeto.mensagem}</p>`;
+      }
+    } catch (error) {
+      console.error('Erro ao buscar objeto:', error);
+      alert('Erro ao buscar o objeto. Tente novamente.');
+    }
+  });
+</script>
+
+
+
+  <footer class="text-center p-4 bg-dark text-white fixed-bottom">
+    <p>&copy; 2024 Fametro. Todos os direitos reservados.</p>
+  </footer>
+</body>
+
+</html>

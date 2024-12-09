@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fametro - Cadastrar Item Devolvido</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="../gerenciar-itens-devolvidos.html">Voltar</a>
+  </nav>
+
+  <header class="text-center p-4">
+    <h1 class="h3">Cadastrar Item Devolvido</h1>
+  </header>
+
+  <main class="container">
+    <form id="formCadastro" action="/inserir_objetoA" method="POST">
+      <div class="form-group">
+        <label for="id_objeto">ID do Objeto</label>
+        <input type="text" class="form-control" id="id_objeto" name="id_objeto" required>
+      </div>
+      <div class="form-group">
+        <label for="nome_pessoa">Nome da Pessoa</label>
+        <input type="text" class="form-control" id="nome_pessoa" name="nome_pessoa" required>
+      </div>
+      <div class="form-group">
+        <label for="cpf">CPF</label>
+        <input type="text" class="form-control" id="cpf" name="cpf" required>
+      </div>
+      <div class="form-group">
+        <label for="contato">Contato (Celular ou E-mail)</label>
+        <input type="text" class="form-control" id="contato" name="contato" required>
+      </div>
+      <button type="submit" class="btn btn-success mt-3">Cadastrar</button>
+    </form>
+</main>
+
+
+<script>
+  document.getElementById('formCadastro').addEventListener('submit', async function (e) {
+    e.preventDefault(); 
+
+    const id_objeto = document.getElementById('id_objeto').value;
+    const nome_pessoa = document.getElementById('nome_pessoa').value;
+    const cpf = document.getElementById('cpf').value;
+    const contato = document.getElementById('contato').value;
+
+    const dados = {
+      id_objeto,
+      nome_pessoa,
+      cpf,
+      contato
+    };
+
+    try {
+
+      const response = await fetch('http://localhost:5000/inserir_objetoA', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',  
+        },
+        body: JSON.stringify(dados),  
+      });
+
+      const resultado = await response.json();  
+
+      alert(resultado.mensagem);
+      
+      if (response.ok) {
+        document.getElementById('formCadastro').reset();
+      }
+
+    } catch (error) {
+
+      console.error('Erro ao cadastrar objeto achado:', error);
+      alert('Erro ao cadastrar objeto achado. Tente novamente.');
+    }
+});
+
+</script>
+
+  <footer class="text-center p-4 bg-dark text-white fixed-bottom">
+    <p>&copy; 2024 Fametro. Todos os direitos reservados.</p>
+  </footer>
+</body>
+
+</html>

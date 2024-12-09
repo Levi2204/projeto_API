@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fametro - Deletar Item Devolvido</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="../gerenciar-itens-devolvidos.html">Voltar</a>
+  </nav>
+
+  <header class="text-center p-4">
+    <h1 class="h3">Deletar Item Devolvido</h1>
+  </header>
+
+  <main class="container">
+    <form id="formDeletar">
+      <div class="form-group">
+        <label for="id">ID do Objeto</label>
+        <input type="number" class="form-control" id="id" name="id" required>
+      </div>
+      <button type="submit" class="btn btn-danger mt-3">Deletar</button>
+    </form>
+
+    
+</main>
+
+<script>
+  document.getElementById('formDeletar').addEventListener('submit', async function (e) {
+    e.preventDefault(); 
+
+    const id = document.getElementById('id').value;
+
+    try {
+      const response = await fetch(`http://localhost:5000/deletar_objetoA/${id}`, {
+        method: 'DELETE',  
+      });
+
+      const result = await response.json();  
+
+      if (response.ok) {
+        
+        alert(`Sucesso: ${result.mensagem}`);
+      } else {
+
+        alert(`Erro: ${result.mensagem}`);
+      }
+    } catch (error) {
+      console.error("Erro ao deletar o objeto:", error);
+      alert("Erro ao tentar deletar o objeto. Tente novamente.");
+    }
+  });
+</script>
+
+
+
+
+
+  <footer class="text-center p-4 bg-dark text-white fixed-bottom">
+    <p>&copy; 2024 Fametro. Todos os direitos reservados.</p>
+  </footer>
+</body>
+
+</html>

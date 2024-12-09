@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fametro - Cadastrar Objeto</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="../gerenciar-objetos.html">Voltar</a>
+  </nav>
+
+  <header class="text-center p-4">
+    <h1 class="h3">Cadastrar Objeto Perdido</h1>
+  </header>
+
+  <main class="container">
+    <form id="form-objeto">
+      <div class="form-group">
+        <label for="nome">Nome do Objeto</label>
+        <input type="text" class="form-control" id="nome" name="nome" required>
+      </div>
+      <div class="form-group">
+        <label for="cor">Cor</label>
+        <input type="text" class="form-control" id="cor" name="cor" required>
+      </div>
+      <div class="form-group">
+        <label for="data">Data Perdido</label>
+        <input type="text" class="form-control" id="data" name="data" required>
+      </div>
+      <button type="button" id="submit-btn" class="btn btn-success mt-3">Cadastrar</button>
+    </form>
+  </main>
+  
+  <script>
+    document.getElementById("submit-btn").addEventListener("click", async () => {
+      const nome = document.getElementById("nome").value;
+      const cor = document.getElementById("cor").value;
+      const data = document.getElementById("data").value;
+  
+      const response = await fetch("http://localhost:5000/inserir_objeto", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          nome_objeto: nome,
+          cor: cor,
+          data_perdido: data,
+        }),
+      });
+  
+      const result = await response.json();
+      alert(result.mensagem);
+    });
+  </script>
+
+  <footer class="text-center p-4 bg-dark text-white fixed-bottom">
+    <p>&copy; 2024 Fametro. Todos os direitos reservados.</p>
+  </footer>
+</body>
+
+</html>

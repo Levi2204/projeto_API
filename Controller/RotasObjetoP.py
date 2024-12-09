@@ -68,37 +68,63 @@ def criar_rotasP(app):
         else:
             return jsonify({'mensagem': 'Erro ao atualizar o objeto'}), 500
 
-
     @app.route('/deletar_objeto/<int:id_objeto>', methods=['DELETE'])
     def deletar_objeto(id_objeto):
+        print(f"Tentando deletar objeto com ID: {id_objeto}")
+
         query = """
         DELETE FROM objetos_perdidos WHERE id_objeto = %s
         """
-
         params = (id_objeto,)
 
-        resultado = executar_consulta(query, params)
+        try:
+            resultado = executar_consulta(query, params)
 
-        if resultado:
-            return jsonify({'mensagem': 'Objeto deletado com sucesso'})
-        else:
+            if resultado:
+                print(f"Objeto com ID {id_objeto} deletado com sucesso.")
+                return jsonify({'mensagem': 'Objeto deletado com sucesso'})
+            else:
+                print(f"Falha ao deletar o objeto com ID {id_objeto}. Nenhuma linha foi afetada.")
+                return jsonify({'mensagem': 'Erro ao deletar o objeto'}), 500
+        except Exception as e:
+            print(f"Erro ao realizar a consulta: {e}")
             return jsonify({'mensagem': 'Erro ao deletar o objeto'}), 500
-
 
     @app.route('/listar_objetos', methods=['GET'])
     def listar_objetos():
         query = "SELECT * FROM objetos_perdidos"
         resultado = selecionar_dados(query)
-        return jsonify(resultado)
 
+        if not resultado:
+            return jsonify([])
 
+        objetos = [
+            {
+                "id_objeto": objeto[0],
+                "nome_objeto": objeto[1],
+                "cor": objeto[2],
+                "data_perdido": objeto[3]
+            }
+            for objeto in resultado
+        ]
+
+        return jsonify(objetos)
 
     @app.route('/listar_objeto/<int:id_objeto>', methods=['GET'])
     def listar_objeto(id_objeto):
         query = "SELECT * FROM objetos_perdidos WHERE id_objeto = %s"
         params = (id_objeto,)
         resultado = selecionar_dados(query, params)
+
         if resultado:
-            return jsonify({"Objeto-perdido": resultado[0]})
+
+            objeto = resultado[0]
+            objeto_dict = {
+                "id_objeto": objeto[0],
+                "nome_objeto": objeto[1],
+                "cor": objeto[2],
+                "data_perdido": objeto[3]
+            }
+            return jsonify({"Objeto-perdido": objeto_dict})
         else:
             return jsonify({"mensagem": "Objeto não encontrado"}), 404
